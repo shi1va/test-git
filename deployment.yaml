@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: nginx-ns
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx-pod
+      namespace: nginx-ns 
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+follow this: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+###################
+kubectl apply -f deployment.yml --dry-run=client # before applying the let's dry run to check it's corrrect or not
+kubectl apply -f deployment.yml  #apply the deployment yaml file
+kubectl get deployment -n nginx-ns
+kubectl get pods -n nginx-ns
+kubectl scale deployment nginx-deployment -n nginx-ns --replicas=10  #scale up
+kubectl scale deployment nginx-deployment -n nginx-ns --replicas=1   #scale down
+watch kubectl get pods -n nginx-ns  # get automated update pods status every sec
+
+
+#A Kubernetes cluster can theoretically support up to 5,000 nodes, 
+#but practical limits may vary based on factors like network bandwidth and control plane configuration. 
+
+@In Kubernetes, there's no fixed limit to the number of pods in a cluster, but best practices suggest a maximum of 110 pods per node and Kubernetes is designed to accommodate clusters with up to 5,000 nodes, 
+potentially supporting a total of 150,000 pods
+
+********************************************ReplicaSet******************************************************************************************
+kubectl get rs -n nginx-ns
+#deployment runs replicasets in background
+diff betn deployment and replicaset is deployment run replicas and scale up and down and rolling update but replicasets runs define desired state mentioned in replicas.
+***************************************
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myreplicaset
+  labels:
+    app: myapp
+    key: value
+spec:
+  replicas: <Replicas>
+  selector:
+    matchLabels:
+      key: value
+  template:
+    metadata:
+      labels:
+        key: value
+    spec:
+      containers:
+        - name: myapp
+          image: <Image>
+**********************************************
