@@ -1,2 +1,2 @@
 # test-git
-for test and demo
+for test and demo.
